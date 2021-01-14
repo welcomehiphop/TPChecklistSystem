@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">Theme Patrol</string>
+
+
+    <string name="title_activity_n_g">NGActivity</string>
+    <string name="first_fragment_label">First Fragment</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="hello_first_fragment">Hello first fragment</string>
+
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string-array name="CheckStatus">
+        <item>Select Status</item>
+        <item>Pending</item>
+        <item>Finish</item>
+    </string-array>
+
+    <string-array name="filterData">
+        <item>All</item>
+        <item>Pending</item>
+        <item>Finish</item>
+    </string-array>
+
+    <string-array name="filterDataItem">
+        <item>Select Item</item>
+        <item>E/V Motor ,Driving  and speed reducer</item>
+        <item>AIR Leak check, Safety Valve Check</item>
+        <item>Hydraulic Hose check</item>
+        <item>Electric Panel Duct, and  connector check</item>
+        <item>Safety check</item>
+        <item>Hydraulic Unit check</item>
+        <item>Electric Rail Power duct check</item>
+        <item>Control panel check</item>
+        <item>Servo Moto Current check</item>
+        <item>PLC Battery check</item>
+        <item>Main Panel Insulation check</item>
+        <item>MDB ,NFB check</item>
+        <item>Air Unit Check</item>
+        <item>Cooling Tower check</item>
+        <item>Tower Lamp check , Power Base</item>
+        <item>Coupling</item>
+        <item>Sensor Fix check</item>
+        <item>C/V Chain Tension check</item>
+    </string-array>
+
+</resources>
