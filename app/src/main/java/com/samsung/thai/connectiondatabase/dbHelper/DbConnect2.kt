@@ -1,8 +1,8 @@
 package com.samsung.thai.connectiondatabase.dbHelper
 
 import android.os.StrictMode
-import com.samsung.thai.connectiondatabase.recycView.CheckList
-import com.samsung.thai.connectiondatabase.recycView.NGList
+import com.samsung.thai.connectiondatabase.Models.CheckList
+import com.samsung.thai.connectiondatabase.Models.NGList
 import java.sql.*
 import kotlin.collections.ArrayList
 

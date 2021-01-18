@@ -1,23 +1,22 @@
-package com.samsung.thai.connectiondatabase
+package com.samsung.thai.connectiondatabase.activitys
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
+import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.samsung.thai.connectiondatabase.CustomDropDownAdapter
+import com.samsung.thai.connectiondatabase.R
 import com.samsung.thai.connectiondatabase.dbHelper.dbConnect2
-import com.samsung.thai.connectiondatabase.recycView.EditAdater
-import com.samsung.thai.connectiondatabase.recycView.NGList
+import com.samsung.thai.connectiondatabase.EditAdater
 
 
-class EditActivity : AppCompatActivity(),EditAdater.OnItemClickListener{
+class EditActivity : AppCompatActivity(), EditAdater.OnItemClickListener{
     companion object{
         var dbConnect2: dbConnect2 = dbConnect2()
     }
@@ -28,6 +27,9 @@ class EditActivity : AppCompatActivity(),EditAdater.OnItemClickListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit)
+        if(resources.getBoolean(R.bool.portrait_only)){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
         rvEdit = findViewById(R.id.rv_edit)
         val layoutManager = LinearLayoutManager(applicationContext)
         rvEdit.layoutManager = layoutManager

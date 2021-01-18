@@ -1,11 +1,12 @@
-package com.samsung.thai.connectiondatabase
+package com.samsung.thai.connectiondatabase.activitys
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
-import com.journeyapps.barcodescanner.BarcodeView
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
+import com.samsung.thai.connectiondatabase.R
 
 class CustomActivity : AppCompatActivity() {
     private lateinit var capture: CaptureManager
@@ -13,6 +14,9 @@ class CustomActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_custom)
+        if(resources.getBoolean(R.bool.portrait_only)){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
         bcScanner = findViewById(R.id.bcScanner)
         capture = CaptureManager(this, bcScanner)
         capture.apply {

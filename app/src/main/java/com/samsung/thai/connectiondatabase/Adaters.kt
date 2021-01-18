@@ -1,4 +1,4 @@
-package com.samsung.thai.connectiondatabase.recycView
+package com.samsung.thai.connectiondatabase
 
 import android.graphics.Color
 import android.util.Log
@@ -6,16 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.os.HandlerCompat.postDelayed
 import androidx.recyclerview.widget.RecyclerView
-import com.samsung.thai.connectiondatabase.R
+import com.samsung.thai.connectiondatabase.Models.CheckList
+import com.samsung.thai.connectiondatabase.Models.NGList
 
 class ExampleAdater(private val checkList: List<CheckList>,
                     private val listener: OnItemClickListener
 ) : RecyclerView.Adapter<ExampleAdater.ExampleViewHolder>(){
     var mLastClickTime = System.currentTimeMillis()
     var CLICK_TIME_INTERVAL = 500
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):ExampleViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExampleViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.io_products, parent, false)
         return ExampleViewHolder(view)
     }
@@ -60,7 +60,7 @@ class EditAdater(private val ngList: List<NGList>,
 ) : RecyclerView.Adapter<EditAdater.EditViewHolder>(){
     var mLastClickTime = System.currentTimeMillis()
     var CLICK_TIME_INTERVAL = 500
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):EditViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EditViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.io_edit, parent, false)
         return EditViewHolder(view)
     }

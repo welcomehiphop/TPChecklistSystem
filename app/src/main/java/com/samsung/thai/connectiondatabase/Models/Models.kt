@@ -1,4 +1,4 @@
-package com.samsung.thai.connectiondatabase.recycView
+package com.samsung.thai.connectiondatabase.Models
 
 data class CheckList (var content_id: String,var List:String,var Status:String)
 

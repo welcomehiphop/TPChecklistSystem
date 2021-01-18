@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".recycView.ChecklistActivity">
+    tools:context=".activitys.ChecklistActivity">
 
     <LinearLayout
         android:layout_marginStart="24dp"

@@ -13,20 +13,20 @@
         android:theme="@style/Theme.ConnectionDatabase"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".NGActivity"
+            android:name=".activitys.NGActivity"
             android:label="@string/title_activity_n_g"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.ConnectionDatabase.NoActionBar"/>
-        <activity android:name=".EditActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".DetailActivity"
+        <activity android:name=".activitys.EditActivity" />
+        <activity android:name=".activitys.MainActivity" />
+        <activity android:name=".activitys.DetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.ConnectionDatabase.NoActionBar"/>
-        <activity android:name=".CustomActivity" />
-        <activity android:name=".recycView.ChecklistActivity" />
+        <activity android:name=".activitys.CustomActivity" />
+        <activity android:name=".activitys.ChecklistActivity" />
         <activity
-            android:name=".ScannerActivity" />
-        <activity android:name=".LoginActivity">
+            android:name=".activitys.ScannerActivity" />
+        <activity android:name=".activitys.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

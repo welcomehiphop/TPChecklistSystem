@@ -52,7 +52,7 @@ class CustomViewfinderView(context: Context?, attrs: AttributeSet?) :
                 //Vẽ viền
                 drawFrameBounds(canvas, frame)
                 //vẽ đường scan
-                drawScanLight(canvas, frame)
+//                drawScanLight(canvas, frame)
 
                 val scaleX = frame.width() / previewFrame.width()
                 val scaleY = frame.height() / previewFrame.height()
@@ -165,21 +165,21 @@ class CustomViewfinderView(context: Context?, attrs: AttributeSet?) :
     }
 
     val SCAN_VELOCITY = 50 // tốc độ của của scan line
-    private fun drawScanLight(canvas: Canvas, frame: Rect) {
-        paint.color = laserColor
-        paint.alpha = 250
-        if (scanLineTop == 0 || scanLineTop + SCAN_VELOCITY >= frame.bottom) {
-            scanLineTop = frame.top
-        } else {
-            scanLineTop += SCAN_VELOCITY // thay đổi vị trí của scan line
-        }
-        val scanRect = Rect(
-            frame.left, scanLineTop, frame.right,
-            scanLineTop + scanLightHeight
-        )
-        val scanLight = AppCompatResources.getDrawable(context, R.drawable.scan_line)!!.toBitmap()
-//        Log.i("Testaaa",scanLight.toString())
-//        val scanLight: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.scan_line)
-        canvas.drawBitmap(scanLight, null, scanRect, paint)
-    }
+//    private fun drawScanLight(canvas: Canvas, frame: Rect) {
+//        paint.color = laserColor
+//        paint.alpha = 250
+//        if (scanLineTop == 0 || scanLineTop + SCAN_VELOCITY >= frame.bottom) {
+//            scanLineTop = frame.top
+//        } else {
+//            scanLineTop += SCAN_VELOCITY // thay đổi vị trí của scan line
+//        }
+//        val scanRect = Rect(
+//            frame.left, scanLineTop, frame.right,
+//            scanLineTop + scanLightHeight
+//        )
+//        val scanLight = AppCompatResources.getDrawable(context, R.drawable.scan_line)!!.toBitmap()
+////        Log.i("Testaaa",scanLight.toString())
+////        val scanLight: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.scan_line)
+//        canvas.drawBitmap(scanLight, null, scanRect, paint)
+//    }
 }

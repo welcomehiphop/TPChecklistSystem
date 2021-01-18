@@ -1,201 +1,142 @@
-package com.samsung.thai.connectiondatabase
+package com.samsung.thai.connectiondatabase.activitys
 
 import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
+import com.samsung.thai.connectiondatabase.CustomDropDownAdapter
+import com.samsung.thai.connectiondatabase.FileDataPart
+import com.samsung.thai.connectiondatabase.R
+import com.samsung.thai.connectiondatabase.VolleyFileUploadRequest
 import com.samsung.thai.connectiondatabase.dbHelper.dbConnect2
+import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
-import kotlin.collections.HashMap
-import kotlin.collections.Map
-import kotlin.collections.MutableMap
-import kotlin.collections.isNotEmpty
-import kotlin.collections.set
+import kotlin.math.log
 
-
-private const val PERMISSION_CODE_READ = 1001
-private const val PERMISSION_CODE_WRITE = 1002
-private const val IMAGE_PICK_CODE = 1
-private const val PERMISSION_CODE = 1000
-private const val IMAGE_CAPTURE_CODE = 0
-private var image_uri: Uri? = null
-private var isCameraOne = true
-private var imageData: ByteArray? = null
-private var imageData2: ByteArray? = null
-private const val postURL: String = "http://107.101.81.9:11111/machine_audit/upload_image.php" //
-val dbConnect2 = dbConnect2()
-var imageName = ""
-var imageBefore =""
-var imageAfter = ""
-
-class DetailActivity : AppCompatActivity() {
-
+class NGActivity : AppCompatActivity() {
     var bitmapTemp: Bitmap? = null
     var bitmapTemp2: Bitmap? = null
     lateinit var imageView: ImageView
     lateinit var imageView2: ImageView
-
+    companion object{
+        var dbConnect2 : dbConnect2 = dbConnect2()
+        private const val PERMISSION_CODE_READ = 1001
+        private const val PERMISSION_CODE_WRITE = 1002
+        private const val IMAGE_PICK_CODE = 1
+        private const val PERMISSION_CODE = 1000
+        private const val IMAGE_CAPTURE_CODE = 0
+        private var image_uri: Uri? = null
+        private var isCameraOne = true
+        private var imageData: ByteArray? = null
+        private var imageData2: ByteArray? = null
+        private const val postURL: String = "http://107.101.81.9:11111/machine_audit/upload_image.php" //
+        var imageName = ""
+        var imageBefore =""
+        var imageAfter = ""
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+        if(resources.getBoolean(R.bool.portrait_only)){
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
+        val plant = intent.getStringExtra("plant").toString()
         val txtDayName = findViewById<TextView>(R.id.txtDayName)
         val txtDate = findViewById<TextView>(R.id.txtDate)
-        val txtDetail = findViewById<TextView>(R.id.txtDetail)
-        var checkStatus = resources.getStringArray(R.array.CheckStatus)
+        val txtContentName = findViewById<TextView>(R.id.txtDetail)
+        val week = intent.getStringExtra("week").toString()
+        val contentCheck = intent.getStringExtra("contentName").toString()
+        var date = dbConnect2.getDate()
+        val checkID = intent.getStringExtra("check_id").toString()
+        val machineID = intent.getStringExtra("machine_id").toString()
+        val contentID = intent.getStringExtra("content_id").toString()
+        val imageUri = dbConnect2.getImageUrl(checkID,machineID,contentID,week)
+
+        if(imageUri != null){
+            val imageView = findViewById<ImageView>(R.id.imageViewBefore)
+            Picasso.get().load(imageUri).into(imageView)
+        }
+
+        val dateAndTime = dbConnect2.getDateAndTime()
+        date = date.substring(8) + "/" + date.substring(5, 7) + "/" + date.substring(0, 4)
+        txtDayName.text = "Week : $week"
+        txtDate.text = "Date : $date"
+        txtContentName.text = "Content Check : $contentCheck"
+        val status : ArrayList<String> = ArrayList(listOf(*resources.getStringArray(R.array.CheckStatus)))
         val spinner = findViewById<Spinner>(R.id.spinner_status)
-        val etComment = findViewById<EditText>(R.id.etComment)
-
-        txtDetail.text = "Content Check : " + intent.getStringExtra("itemList")
-        txtDate.text = intent.getStringExtra("date")
-        txtDayName.text = intent.getStringExtra("week")
-
         if (spinner != null) {
-            val status : ArrayList<String> = ArrayList(listOf(*resources.getStringArray(R.array.CheckStatus)))
-            val customDropDownAdapter = CustomDropDownAdapter(this, status)
 //            val adapter = ArrayAdapter(this, R.layout.spinner_item, checkStatus)
+
+            val customDropDownAdapter = CustomDropDownAdapter(this, status)
             spinner.adapter = customDropDownAdapter
             spinner.setSelection(0)
-            spinner.onItemSelectedListener = object :
-                    AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                }
-                override fun onNothingSelected(parent: AdapterView<*>) {
-                    // write code to perform some action
-                }
-            }
+        }
 
+        val btnBefore = findViewById<ImageView>(R.id.btnBefore)
+        btnBefore.setImageResource(R.drawable.ic_camera2)
+
+        val btnAfter = findViewById<ImageView>(R.id.btnAfter)
+        btnAfter.setOnClickListener {
+            val checkStatus = spinner.selectedItem.toString()
+                it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
+                imageName = "img_after_${dbConnect2.getDateAndTime()}.jpeg"
+                imageAfter = imageName
+                isCameraOne = false
+                selectImage(this)
         }
 
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
+        val etComment = findViewById<EditText>(R.id.etComment)
+//        btnSubmit.setOnClickListener {
+//            Log.d("TestComment","Comment = " + etComment.text.toString())
+//        }
         btnSubmit.setOnClickListener {
-            it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 1000) }
-            val position = intent.getIntExtra("position", 0)
-            Log.i("Testaaa", position.toString())
-            val checkID = intent.getStringExtra("checkID").toString()
-            val week = intent.getStringExtra("week").toString()
-            val machineID = intent.getStringExtra("qrCode").toString()
-            val contentID = intent.getStringExtra("contentID").toString()
-            val status = spinner.selectedItem.toString()
-            val comment = etComment.text.toString()
-            val empID = intent.getStringExtra("empID").toString()
-            Log.d("EMPID", "EMPID=$empID")
-            val plant = intent.getStringExtra("plant").toString()
-            var date = dbConnect2.getDate()
-
-            var dateAndTime = dbConnect2.getDateAndTime()
-            val inputdate = date.substring(0,4) + "-" + date.substring(5, 7) + "-" + date.substring(8) + " " +  dateAndTime.substring(10,12) + ":" + dateAndTime.substring(13,15) + ":" + dateAndTime.substring(16,18)
-            var imageLink = "http://107.101.81.9:11111/machine_audit/img_mobile/" +
-                    "${plant.substring(8)}/" +
-                    "${date.substring(0, 4)}/" +
-                    "${date.substring(5, 7)}/" +
-                    "${date!!.substring(8)}/" +
-                    "$imageBefore"
-            var imageLink2 = "http://107.101.81.9:11111/machine_audit/img_mobile/" +
-                    "${plant!!.substring(8)}/" +
-                    "${date.substring(0, 4)}/" +
-                    "${date.substring(5, 7)}/" +
-                    "${date.substring(8)}/" +
-                    "$imageAfter"
-            if (bitmapTemp != null && bitmapTemp2 != null) {
-                if(status == "Finish"){
-                    btnSubmit.isClickable = false
-                    uploadImage(bitmapTemp!!, imageBefore)
+            val checkStatus = spinner.selectedItem.toString()
+            it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 1500) }
+            if(bitmapTemp2 != null) {
+                if(checkStatus == "Finish"){
+                    var date = dbConnect2.getDate()
+                    Log.d("TestDate",date)
+                    val empID = intent.getStringExtra("empID").toString()
                     uploadImage(bitmapTemp2!!, imageAfter)
-                    dbConnect2.addResult(
-                            checkID,
-                            week.substring(7),
-                            machineID,
-                            contentID,
-                            status,
-                            comment,
-                            imageLink,
-                            imageLink2,
-                            empID.substring(9),
-                            inputdate,
-                            empID.substring(9),
-                            inputdate
-                    )
-                    Handler().postDelayed(Runnable {
-                        val intent = Intent()
-                        intent.putExtra("status","Finish")
-                        intent.putExtra("position2",position)
-                        setResult(RESULT_OK,intent)
-                        finish()
-                    }, 1000)
-                }else {
-                    Toast.makeText(this,"Please change status.",Toast.LENGTH_LONG).show()
-                }
-            }else if (bitmapTemp != null && bitmapTemp2 == null) {
-                if(status == "Pending"){
-                    btnSubmit.isClickable = false
-                    uploadImage(bitmapTemp!!, imageBefore)
-                    imageLink2 = ""
-                    dbConnect2.addResult(
-                            checkID,
-                            week.substring(7),
-                            machineID,
-                            contentID,
-                            status,
-                            comment,
-                            imageLink,
-                            imageLink2,
-                            empID.substring(9),
-                            inputdate,
-                            "",
-                            ""
-                    )
-                    Handler().postDelayed(Runnable {
-                        val intent = Intent()
-                        intent.putExtra("status","Pending")
-                        intent.putExtra("position2",position)
-                        setResult(RESULT_OK,intent)
+                    var imageLink2 = "http://107.101.81.9:11111/machine_audit/img_mobile/" +
+                            "${plant}/" +
+                            "${date.substring(0, 4)}/" +
+                            "${date.substring(5, 7)}/" +
+                            "${date.substring(8)}/" +
+                            "$imageAfter"
+                    Log.d("ImageLink2",imageLink2)
+                    dbConnect2.updateNG(imageLink2, empID, date, etComment.text.toString(), checkID, machineID, contentID, week)
+//                    val dialog = setProgressDialog(this, "Please Wait...")
+//                    dialog.show()
+                    Handler(Looper.getMainLooper()).postDelayed(Runnable {
                         finish()
                     }, 1000)
                 }else{
-                    Toast.makeText(this,"Please change status.",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Please change status to Finish",Toast.LENGTH_LONG).show()
                 }
-            }else {
-                Toast.makeText(this, "Please select image.", Toast.LENGTH_LONG).show()
+            }else{
+                Toast.makeText(this,"Please fill all fields",Toast.LENGTH_LONG).show()
             }
-        }
-        val btnBefore = findViewById<ImageView>(R.id.btnBefore)
-        btnBefore.setOnClickListener {
-            it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
-            imageName = "img_before_${dbConnect2.getDateAndTime()}.jpeg"
-            imageBefore = imageName
-            isCameraOne = true
-            selectImage(this)
-        }
-        val btnAfter = findViewById<ImageView>(R.id.btnAfter)
-        btnAfter.setOnClickListener {
-            it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
-            imageName = "img_after_${dbConnect2.getDateAndTime()}.jpeg"
-            imageAfter = imageName
-            isCameraOne = false
-            selectImage(this)
         }
     }
 
@@ -297,6 +238,8 @@ class DetailActivity : AppCompatActivity() {
 
     private fun uploadImage(bitmap: Bitmap, imageName: String) {
         imageData ?: return
+        val plant = intent.getStringExtra("plant").toString()
+        var dateChange: String = dbConnect2.getDate()
         val request = object : VolleyFileUploadRequest(
                 Method.POST,
                 postURL,
@@ -313,8 +256,8 @@ class DetailActivity : AppCompatActivity() {
                 return params
             }
 
-            val plant = intent.getStringExtra("plant").toString()
-            val date = dbConnect2.getDate()
+
+
             override fun getParams(): Map<String, String>? {
                 val encodedString: String = Base64.encodeToString(
                         getFileDataFromDrawable(bitmap),
@@ -323,10 +266,10 @@ class DetailActivity : AppCompatActivity() {
                 val params: MutableMap<String, String> = HashMap()
                 params["image"] = encodedString
                 params["filename"] = imageName
-                params["plant"] = plant.substring(8)
-                params["data_yy"] = date.substring(0, 4)
-                params["data_mm"] = date.substring(5, 7)
-                params["data_dd"] = date.substring(8)
+                params["plant"] = plant
+                params["data_yy"] = dateChange.substring(0,4)
+                params["data_mm"] = dateChange.substring(5,7)
+                params["data_dd"] = dateChange.substring(8)
                 return params
             }
         }
@@ -339,14 +282,6 @@ class DetailActivity : AppCompatActivity() {
         val inputStream = contentResolver.openInputStream(uri)
         inputStream?.buffered()?.use {
             imageData = it.readBytes()
-        }
-    }
-
-    @Throws(IOException::class)
-    private fun createImageData2(uri: Uri) {
-        val inputStream = contentResolver.openInputStream(uri)
-        inputStream?.buffered()?.use {
-            imageData2 = it.readBytes()
         }
     }
 
@@ -371,7 +306,7 @@ class DetailActivity : AppCompatActivity() {
                     val bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
                     bitmapTemp2 = bmp
                     imageView2.setImageBitmap(bitmapTemp2)
-                    createImageData2(image_uri!!)
+                    createImageData(image_uri!!)
                 }
             } else if (resultCode === RESULT_CANCELED) {
                 return
@@ -393,7 +328,7 @@ class DetailActivity : AppCompatActivity() {
                     val bmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
                     bitmapTemp2 = bmp
                     imageView2.setImageBitmap(bitmapTemp2)
-                    createImageData2(uri!!)
+                    createImageData(uri!!)
                 }
             } else if (resultCode === RESULT_CANCELED) {
                 return
@@ -401,3 +336,4 @@ class DetailActivity : AppCompatActivity() {
         }
     }
 }
+
