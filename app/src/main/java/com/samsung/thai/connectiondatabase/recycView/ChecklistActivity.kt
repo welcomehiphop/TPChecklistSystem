@@ -79,7 +79,6 @@ class ChecklistActivity : AppCompatActivity(),ExampleAdater.OnItemClickListener{
     }
 
     override fun onItemClick(position: Int) {
-
         if(txtDayName.text.toString().substring(7) == dbConnect2.getWeek() && checkList[position].Status != "Finish" && checkList[position].Status != "Pending"){
             adapterList.notifyDataSetChanged()
             val intent = Intent(this, DetailActivity::class.java)
