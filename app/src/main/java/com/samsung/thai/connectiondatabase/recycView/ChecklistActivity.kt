@@ -30,6 +30,7 @@ class ChecklistActivity : AppCompatActivity(),ExampleAdater.OnItemClickListener{
     lateinit var adapterList : ExampleAdater
     lateinit var machineID : String
     lateinit var checkList : ArrayList<CheckList>
+    var empNo = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checklist)
@@ -42,6 +43,7 @@ class ChecklistActivity : AppCompatActivity(),ExampleAdater.OnItemClickListener{
         val txtLine = findViewById<TextView>(R.id.txtLine)
         rvList = findViewById(R.id.rvProduct)
         empID = intent.getStringExtra("empID").toString()
+        empNo = empID.substring(9).trim()
         qrCode = intent.getStringExtra("qrCode").toString()
         machineID = qrCode
         val machineInfo = dbConnect2.getMachineName(machineID)
@@ -55,8 +57,8 @@ class ChecklistActivity : AppCompatActivity(),ExampleAdater.OnItemClickListener{
             txtPlant.text = "Plant : " + machineInfo[1]
             txtLine.text = "Line : " + machineInfo[2]
         }
-
-        checkList = dbConnect2.getCheckList(dbConnect2.getWeek().toInt(),machineID)
+        
+        checkList = dbConnect2.getCheckList(dbConnect2.getWeek().toInt(),machineID,empNo)
         val layoutManager = LinearLayoutManager(applicationContext)
         rvList.layoutManager = layoutManager
         adapterList = ExampleAdater(checkList, this)
@@ -121,7 +123,7 @@ class ChecklistActivity : AppCompatActivity(),ExampleAdater.OnItemClickListener{
         numberPicker.setOnValueChangedListener { _, _, _ -> println("onValueChange: ") }
         d.setPositiveButton("Done") { _, _ ->
             txtDayName.text = "Week : " + numberPicker.value
-            checkList = dbConnect2.getCheckList(numberPicker.value, machineID)
+            checkList = dbConnect2.getCheckList(numberPicker.value, machineID,empNo)
             themPatrol = dbConnect2.getThemePatrol(numberPicker.value)
             txtPatrol.text = themPatrol[1]
             val adapterList = ExampleAdater(checkList, this)

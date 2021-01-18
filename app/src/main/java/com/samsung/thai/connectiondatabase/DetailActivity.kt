@@ -104,6 +104,7 @@ class DetailActivity : AppCompatActivity() {
             Log.d("EMPID", "EMPID=$empID")
             val plant = intent.getStringExtra("plant").toString()
             var date = dbConnect2.getDate()
+
             var dateAndTime = dbConnect2.getDateAndTime()
             val inputdate = date.substring(0,4) + "-" + date.substring(5, 7) + "-" + date.substring(8) + " " +  dateAndTime.substring(10,12) + ":" + dateAndTime.substring(13,15) + ":" + dateAndTime.substring(16,18)
             var imageLink = "http://107.101.81.9:11111/machine_audit/img_mobile/" +
@@ -120,8 +121,6 @@ class DetailActivity : AppCompatActivity() {
                     "$imageAfter"
             if (bitmapTemp != null && bitmapTemp2 != null) {
                 if(status == "Finish"){
-                    val dialog = setProgressDialog(this, "Please Wait...")
-                    dialog.show()
                     btnSubmit.isClickable = false
                     uploadImage(bitmapTemp!!, imageBefore)
                     uploadImage(bitmapTemp2!!, imageAfter)
@@ -140,7 +139,6 @@ class DetailActivity : AppCompatActivity() {
                             inputdate
                     )
                     Handler().postDelayed(Runnable {
-                        dialog.dismiss()
                         val intent = Intent()
                         intent.putExtra("status","Finish")
                         intent.putExtra("position2",position)
@@ -152,8 +150,6 @@ class DetailActivity : AppCompatActivity() {
                 }
             }else if (bitmapTemp != null && bitmapTemp2 == null) {
                 if(status == "Pending"){
-                    val dialog = setProgressDialog(this, "Please Wait...")
-                    dialog.show()
                     btnSubmit.isClickable = false
                     uploadImage(bitmapTemp!!, imageBefore)
                     imageLink2 = ""
@@ -172,7 +168,6 @@ class DetailActivity : AppCompatActivity() {
                             ""
                     )
                     Handler().postDelayed(Runnable {
-                        dialog.dismiss()
                         val intent = Intent()
                         intent.putExtra("status","Pending")
                         intent.putExtra("position2",position)
@@ -332,7 +327,6 @@ class DetailActivity : AppCompatActivity() {
                 params["data_yy"] = date.substring(0, 4)
                 params["data_mm"] = date.substring(5, 7)
                 params["data_dd"] = date.substring(8)
-                Log.d("TestDate", date)
                 return params
             }
         }
@@ -405,53 +399,5 @@ class DetailActivity : AppCompatActivity() {
                 return
             }
         }
-    }
-    private fun setProgressDialog(context: Context, message: String):AlertDialog {
-
-        val llPadding = 30
-        val ll = LinearLayout(context)
-        ll.orientation = LinearLayout.HORIZONTAL
-        ll.setPadding(llPadding, llPadding, llPadding, llPadding)
-        ll.gravity = Gravity.CENTER
-        var llParam = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        llParam.gravity = Gravity.CENTER
-        ll.layoutParams = llParam
-
-        val progressBar = ProgressBar(context)
-        progressBar.isIndeterminate = true
-        progressBar.setPadding(0, 0, llPadding, 0)
-        progressBar.layoutParams = llParam
-
-        llParam = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        llParam.gravity = Gravity.CENTER
-        val tvText = TextView(context)
-        tvText.text = message
-        tvText.setTextColor(Color.parseColor("#000000"))
-        tvText.textSize = 20.toFloat()
-        tvText.layoutParams = llParam
-
-        ll.addView(progressBar)
-        ll.addView(tvText)
-
-        val builder = AlertDialog.Builder(context)
-        builder.setCancelable(true)
-        builder.setView(ll)
-
-        val dialog = builder.create()
-        val window = dialog.window
-        if (window != null) {
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.copyFrom(dialog.window?.attributes)
-            layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-            layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
-            dialog.window?.attributes = layoutParams
-        }
-        return dialog
     }
 }

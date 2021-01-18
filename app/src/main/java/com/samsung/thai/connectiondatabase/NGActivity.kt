@@ -81,12 +81,11 @@ class NGActivity : AppCompatActivity() {
         txtDayName.text = "Week : $week"
         txtDate.text = "Date : $date"
         txtContentName.text = "Content Check : $contentCheck"
-
-        var checkStatus = resources.getStringArray(R.array.CheckStatus)
+        val status : ArrayList<String> = ArrayList(listOf(*resources.getStringArray(R.array.CheckStatus)))
         val spinner = findViewById<Spinner>(R.id.spinner_status)
         if (spinner != null) {
 //            val adapter = ArrayAdapter(this, R.layout.spinner_item, checkStatus)
-            val status : ArrayList<String> = ArrayList(listOf(*resources.getStringArray(R.array.CheckStatus)))
+
             val customDropDownAdapter = CustomDropDownAdapter(this, status)
             spinner.adapter = customDropDownAdapter
             spinner.setSelection(0)
@@ -97,11 +96,12 @@ class NGActivity : AppCompatActivity() {
 
         val btnAfter = findViewById<ImageView>(R.id.btnAfter)
         btnAfter.setOnClickListener {
-            it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
-            imageName = "img_after_${dbConnect2.getDateAndTime()}.jpeg"
-            imageAfter = imageName
-            isCameraOne = false
-            selectImage(this)
+            val checkStatus = spinner.selectedItem.toString()
+                it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
+                imageName = "img_after_${dbConnect2.getDateAndTime()}.jpeg"
+                imageAfter = imageName
+                isCameraOne = false
+                selectImage(this)
         }
 
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
@@ -110,31 +110,35 @@ class NGActivity : AppCompatActivity() {
 //            Log.d("TestComment","Comment = " + etComment.text.toString())
 //        }
         btnSubmit.setOnClickListener {
+            val checkStatus = spinner.selectedItem.toString()
             it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 1500) }
             if(bitmapTemp2 != null) {
-                var date = dbConnect2.getDate()
-                date = date!!.substring(0, 4) + "-" + date.substring(5, 7) + "-" + date.substring(8) + " " + dateAndTime.substring(10, 12) + ":" + dateAndTime.substring(13, 15) + ":" + dateAndTime.substring(16, 18)
-                val empID = intent.getStringExtra("empID").toString()
-
-                uploadImage(bitmapTemp2!!, imageAfter)
-                var imageLink2 = "http://107.101.81.9:11111/machine_audit/img_mobile/" +
-                        "${plant}/" +
-                        "${date.substring(6, 10)}/" +
-                        "${date.substring(3, 5)}/" +
-                        "${date.substring(0, 2)}/" +
-                        "$imageAfter"
-
-                dbConnect2.updateNG(imageLink2, empID, date, etComment.text.toString(), checkID, machineID, contentID, week)
-                val dialog = setProgressDialog(this, "Please Wait...")
-                dialog.show()
-                Handler().postDelayed(Runnable {
-                    dialog.dismiss()
-                    finish()
-                }, 1000)
+                if(checkStatus == "Finish"){
+                    var date = dbConnect2.getDate()
+                    Log.d("TestDate",date)
+                    val empID = intent.getStringExtra("empID").toString()
+                    uploadImage(bitmapTemp2!!, imageAfter)
+                    var imageLink2 = "http://107.101.81.9:11111/machine_audit/img_mobile/" +
+                            "${plant}/" +
+                            "${date.substring(0, 4)}/" +
+                            "${date.substring(5, 7)}/" +
+                            "${date.substring(8)}/" +
+                            "$imageAfter"
+                    Log.d("ImageLink2",imageLink2)
+                    dbConnect2.updateNG(imageLink2, empID, date, etComment.text.toString(), checkID, machineID, contentID, week)
+//                    val dialog = setProgressDialog(this, "Please Wait...")
+//                    dialog.show()
+                    Handler().postDelayed(Runnable {
+                        finish()
+                    }, 1000)
+                }else{
+                    Toast.makeText(this,"Please change status to Finish",Toast.LENGTH_LONG).show()
+                }
+            }else{
+                Toast.makeText(this,"Please fill all fields",Toast.LENGTH_LONG).show()
             }
         }
     }
-
 
 
     private fun checkPermissionForImage() {
@@ -330,53 +334,6 @@ class NGActivity : AppCompatActivity() {
                 return
             }
         }
-    }
-    private fun setProgressDialog(context: Context, message: String):AlertDialog {
-        val llPadding = 30
-        val ll = LinearLayout(context)
-        ll.orientation = LinearLayout.HORIZONTAL
-        ll.setPadding(llPadding, llPadding, llPadding, llPadding)
-        ll.gravity = Gravity.CENTER
-        var llParam = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        llParam.gravity = Gravity.CENTER
-        ll.layoutParams = llParam
-
-        val progressBar = ProgressBar(context)
-        progressBar.isIndeterminate = true
-        progressBar.setPadding(0, 0, llPadding, 0)
-        progressBar.layoutParams = llParam
-
-        llParam = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        llParam.gravity = Gravity.CENTER
-        val tvText = TextView(context)
-        tvText.text = message
-        tvText.setTextColor(Color.parseColor("#000000"))
-        tvText.textSize = 20.toFloat()
-        tvText.layoutParams = llParam
-
-        ll.addView(progressBar)
-        ll.addView(tvText)
-
-        val builder = AlertDialog.Builder(context)
-        builder.setCancelable(true)
-        builder.setView(ll)
-
-        val dialog = builder.create()
-        val window = dialog.window
-        if (window != null) {
-            val layoutParams = WindowManager.LayoutParams()
-            layoutParams.copyFrom(dialog.window?.attributes)
-            layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-            layoutParams.height = LinearLayout.LayoutParams.WRAP_CONTENT
-            dialog.window?.attributes = layoutParams
-        }
-        return dialog
     }
 }
 

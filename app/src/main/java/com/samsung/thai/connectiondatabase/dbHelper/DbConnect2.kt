@@ -12,7 +12,7 @@ class dbConnect2 {
     lateinit var resultSet: ResultSet
     lateinit var statement: Statement
 
-    var cn_81_9:String = "jdbc:jtds:sqlserver://107.101.81.15:1433;databaseName=intra_TSE;user=sa;password=tsePortal@2013"
+    var cn_81_9:String = "jdbc:jtds:sqlserver://107.101.81.9:1433;databaseName=intra_TSE;user=sa;password=tsePortal@2013"
 
     fun updateNG(pic_after: String,after_empno: String,after_reg_date: String,after_comment: String,check_id: String,machine_id: String,content_id: String,week: String){
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
@@ -108,7 +108,7 @@ class dbConnect2 {
         return ngList
     }
 
-    fun getCheckList(week:Int,machine_id: String): ArrayList<CheckList>{
+    fun getCheckList(week:Int,machine_id: String,empID: String): ArrayList<CheckList>{
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(policy)
         val checkList = ArrayList<CheckList>()
@@ -116,7 +116,7 @@ class dbConnect2 {
             Class.forName("net.sourceforge.jtds.jdbc.Driver")
             connection = DriverManager.getConnection(cn_81_9)
             statement = connection.createStatement()
-            val str = "select *,(select check_status from TP_CheckResult where check_id = t_all.check_id and content_id = t_all.content_id and machine_id = t_all.machine_id and YEAR(before_reg_date) = YEAR(GETDATE())) as check_status from (select d.machine_id,e.machine_name,b.check_id,a.content_name,a.content_id from TP_ContentCheck as a join TP_WeekCheck as b on a.check_id = b.check_id join TP_CheckList as c on a.check_id = b.check_id join TP_CheckMachine as d on c.check_machine = d.check_machine join TP_Machine as e on d.machine_id = e.machine_id where b.week = '$week' and d.machine_id = '$machine_id'  group by a.content_id,b.check_id,a.content_name,d.machine_id,e.machine_name) as t_all"
+            val str = "select *,(select check_status from TP_CheckResult where check_id = t_all.check_id and content_id = t_all.content_id and machine_id = t_all.machine_id and before_empno = '$empID' and YEAR(before_reg_date) = YEAR(GETDATE())) as check_status from (select d.machine_id,e.machine_name,b.check_id,a.content_name,a.content_id from TP_ContentCheck as a join TP_WeekCheck as b on a.check_id = b.check_id join TP_CheckList as c on a.check_id = b.check_id join TP_CheckMachine as d on c.check_machine = d.check_machine join TP_Machine as e on d.machine_id = e.machine_id where b.week = '$week' and d.machine_id = '$machine_id' group by a.content_id,b.check_id,a.content_name,d.machine_id,e.machine_name) as t_all"
 //            val str = "select content_id,content_check from content_check join CheckList2 on content_check.check_id = CheckList2.check_id where CheckList2.week = '$week'"
             resultSet = statement.executeQuery(str)
             while (resultSet.next()) {

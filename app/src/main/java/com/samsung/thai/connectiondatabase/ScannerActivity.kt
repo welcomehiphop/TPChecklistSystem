@@ -17,6 +17,7 @@ class ScannerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scanner)
+
         txtEmp = findViewById(R.id.txtEmp)
         val button = findViewById<Button>(R.id.button)
         val btn_edit = findViewById<Button>(R.id.btn_edit)
