@@ -57,7 +57,7 @@ class ChecklistActivity : AppCompatActivity(),ExampleAdater.OnItemClickListener{
             txtPlant.text = "Plant : " + machineInfo[1]
             txtLine.text = "Line : " + machineInfo[2]
         }
-        
+
         checkList = dbConnect2.getCheckList(dbConnect2.getWeek().toInt(),machineID,empNo)
         val layoutManager = LinearLayoutManager(applicationContext)
         rvList.layoutManager = layoutManager
