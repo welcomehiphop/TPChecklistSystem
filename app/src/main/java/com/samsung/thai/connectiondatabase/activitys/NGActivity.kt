@@ -22,10 +22,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
-import com.samsung.thai.connectiondatabase.CustomDropDownAdapter
-import com.samsung.thai.connectiondatabase.FileDataPart
-import com.samsung.thai.connectiondatabase.R
-import com.samsung.thai.connectiondatabase.VolleyFileUploadRequest
+import com.samsung.thai.connectiondatabase.*
 import com.samsung.thai.connectiondatabase.dbHelper.dbConnect2
 import com.squareup.picasso.Picasso
 import java.io.ByteArrayOutputStream
@@ -110,6 +107,7 @@ class NGActivity : AppCompatActivity() {
 //            Log.d("TestComment","Comment = " + etComment.text.toString())
 //        }
         btnSubmit.setOnClickListener {
+            val loadingDialog = LoadingDialog(this@NGActivity)
             val checkStatus = spinner.selectedItem.toString()
             it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 1500) }
             if(bitmapTemp2 != null) {
@@ -128,8 +126,10 @@ class NGActivity : AppCompatActivity() {
                     dbConnect2.updateNG(imageLink2, empID, date, etComment.text.toString(), checkID, machineID, contentID, week)
 //                    val dialog = setProgressDialog(this, "Please Wait...")
 //                    dialog.show()
+                    loadingDialog.startLoadingDialog()
                     Handler(Looper.getMainLooper()).postDelayed(Runnable {
                         finish()
+                        loadingDialog.dismissDialog()
                     }, 1000)
                 }else{
                     Toast.makeText(this,"Please change status to Finish",Toast.LENGTH_LONG).show()

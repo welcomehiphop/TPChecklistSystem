@@ -12,7 +12,8 @@ class dbConnect2 {
     lateinit var resultSet: ResultSet
     lateinit var statement: Statement
 
-    var cn_81_9:String = "jdbc:jtds:sqlserver://107.101.81.9:1433;databaseName=intra_TSE;user=sa;password=tsePortal@2013"
+    var cn_81_9:String = "jdbc:jtds:sqlserver://192.168.7.114;databaseName=intra_TSE;user=sa;password=1234"
+//    var cn_81_9:String = "jdbc:jtds:sqlserver://107.101.81.9:1433;databaseName=intra_TSE;user=sa;password=tsePortal@2013"
 
     fun updateNG(pic_after: String,after_empno: String,after_reg_date: String,after_comment: String,check_id: String,machine_id: String,content_id: String,week: String){
         val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()

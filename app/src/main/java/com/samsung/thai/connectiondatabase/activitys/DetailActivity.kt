@@ -23,10 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.Volley
-import com.samsung.thai.connectiondatabase.CustomDropDownAdapter
-import com.samsung.thai.connectiondatabase.FileDataPart
-import com.samsung.thai.connectiondatabase.R
-import com.samsung.thai.connectiondatabase.VolleyFileUploadRequest
+import com.samsung.thai.connectiondatabase.*
 import com.samsung.thai.connectiondatabase.dbHelper.dbConnect2
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -94,6 +91,7 @@ class DetailActivity : AppCompatActivity() {
 
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
         btnSubmit.setOnClickListener {
+            val loadingDialog = LoadingDialog(this@DetailActivity)
             it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 1000) }
             val position = intent.getIntExtra("position", 0)
             Log.i("Testaaa", position.toString())
@@ -141,12 +139,15 @@ class DetailActivity : AppCompatActivity() {
                             empID.substring(9),
                             inputdate
                     )
+
+                    loadingDialog.startLoadingDialog()
                     Handler(Looper.getMainLooper()).postDelayed(Runnable {
                         val intent = Intent()
                         intent.putExtra("status","Finish")
                         intent.putExtra("position2",position)
                         setResult(RESULT_OK,intent)
                         finish()
+                        loadingDialog.dismissDialog()
                     }, 1000)
                 }else {
                     Toast.makeText(this,"Please change status.",Toast.LENGTH_LONG).show()
@@ -170,12 +171,14 @@ class DetailActivity : AppCompatActivity() {
                             "",
                             ""
                     )
+                    loadingDialog.startLoadingDialog()
                     Handler(Looper.getMainLooper()).postDelayed(Runnable {
                         val intent = Intent()
                         intent.putExtra("status","Pending")
                         intent.putExtra("position2",position)
                         setResult(RESULT_OK,intent)
                         finish()
+                        loadingDialog.dismissDialog()
                     }, 1000)
                 }else{
                     Toast.makeText(this,"Please change status.",Toast.LENGTH_LONG).show()

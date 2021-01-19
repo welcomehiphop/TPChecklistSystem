@@ -27,7 +27,9 @@ class ScannerActivity : AppCompatActivity() {
         txtGetDate = findViewById(R.id.txtGetDate)
         txtWeek = findViewById(R.id.txtWeek)
         var dateChange: String = dbConnect2.getDate()
-        dateChange = dateChange.substring(8)  + "/" +dateChange.substring(5,7) + "/" + dateChange.substring(0,4)
+        if(dateChange.isNotEmpty()){
+            dateChange = dateChange.substring(8)  + "/" +dateChange.substring(5,7) + "/" + dateChange.substring(0,4)
+        }
         val empID = intent.getStringExtra("empID")
         txtWeek.text = intent.getStringExtra("week")
         txtGetDate.text = dateChange
