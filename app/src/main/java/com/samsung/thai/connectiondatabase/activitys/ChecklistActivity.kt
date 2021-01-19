@@ -15,7 +15,6 @@ import com.samsung.thai.connectiondatabase.R
 import com.samsung.thai.connectiondatabase.dbHelper.dbConnect2
 import com.samsung.thai.connectiondatabase.ExampleAdater
 
-
 class ChecklistActivity : AppCompatActivity(), ExampleAdater.OnItemClickListener {
     companion object{
         var dbConnect2: dbConnect2 = dbConnect2()
