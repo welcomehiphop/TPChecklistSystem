@@ -60,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<List<LoginResponse>>, response: Response<List<LoginResponse>>) {
                             if (response.body()!!.isNotEmpty()) {
                                     val loadingDialog = LoadingDialog(this@LoginActivity)
+
                                     loadingDialog.startLoadingDialog()
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         if (empNo == response.body()!![0].usrid) {

@@ -17,8 +17,9 @@ class LoadingDialog (private val context: Context) {
         builder.setCancelable(false)
 
         dialog = builder.create()
-        dialog = builder.show()
 
+        dialog = builder.show()
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent);
     }
 
     fun dismissDialog() {

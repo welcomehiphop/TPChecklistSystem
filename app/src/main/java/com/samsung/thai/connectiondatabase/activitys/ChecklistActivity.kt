@@ -53,7 +53,7 @@ class ChecklistActivity : AppCompatActivity(), ExampleAdater.OnItemClickListener
             txtMachineName.text = "Machine Name : " + "Unknown"
             txtPlant.text = "Plant : " + "Unknown"
             txtLine.text = "Line : " + "Unknown"
-            Toast.makeText(this,"Unknown Machine",Toast.LENGTH_LONG).show()
+            Toast.makeText(this@ChecklistActivity,"Unknown Machine",Toast.LENGTH_LONG).show()
         }else{
             txtMachineName.text = "Machine Name : " + machineInfo[0]
             txtPlant.text = "Plant : " + machineInfo[1]
@@ -83,7 +83,7 @@ class ChecklistActivity : AppCompatActivity(), ExampleAdater.OnItemClickListener
     override fun onItemClick(position: Int) {
         if(txtDayName.text.toString().substring(7) == dbConnect2.getWeek() && checkList[position].Status != "Finish" && checkList[position].Status != "Pending"){
             adapterList.notifyDataSetChanged()
-            val intent = Intent(this, DetailActivity::class.java)
+            val intent = Intent(this@ChecklistActivity, DetailActivity::class.java)
             intent.putExtra("checkID",themPatrol[0])
             intent.putExtra("contentID",checkList[position].content_id)
             intent.putExtra("week", txtDayName.text)
@@ -111,7 +111,7 @@ class ChecklistActivity : AppCompatActivity(), ExampleAdater.OnItemClickListener
 
     private fun numberPickerCustom2(context: Context) {
         val d = AlertDialog.Builder(context)
-        val inflater = this.layoutInflater
+        val inflater = this@ChecklistActivity.layoutInflater
         val dialogView = inflater.inflate(R.layout.number_picker_dialog, null)
         d.setTitle("Choose Week")
         d.setMessage("Select Week")
@@ -127,7 +127,7 @@ class ChecklistActivity : AppCompatActivity(), ExampleAdater.OnItemClickListener
             checkList = dbConnect2.getCheckList(numberPicker.value, machineID,empNo)
             themPatrol = dbConnect2.getThemePatrol(numberPicker.value)
             txtPatrol.text = themPatrol[1]
-            val adapterList = ExampleAdater(checkList, this)
+            val adapterList = ExampleAdater(checkList, this@ChecklistActivity)
             rvList.adapter = adapterList
         }
         d.setNegativeButton("Cancel") { _, _ -> }

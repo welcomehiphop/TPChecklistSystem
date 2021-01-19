@@ -73,8 +73,9 @@ class NGActivity : AppCompatActivity() {
             Picasso.get().load(imageUri).into(imageView)
         }
 
-        val dateAndTime = dbConnect2.getDateAndTime()
-        date = date.substring(8) + "/" + date.substring(5, 7) + "/" + date.substring(0, 4)
+        if(date.isNotEmpty()){
+            date = date.substring(8) + "/" + date.substring(5, 7) + "/" + date.substring(0, 4)
+        }
         txtDayName.text = "Week : $week"
         txtDate.text = "Date : $date"
         txtContentName.text = "Content Check : $contentCheck"
@@ -93,7 +94,6 @@ class NGActivity : AppCompatActivity() {
 
         val btnAfter = findViewById<ImageView>(R.id.btnAfter)
         btnAfter.setOnClickListener {
-            val checkStatus = spinner.selectedItem.toString()
                 it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
                 imageName = "img_after_${dbConnect2.getDateAndTime()}.jpeg"
                 imageAfter = imageName
@@ -103,9 +103,7 @@ class NGActivity : AppCompatActivity() {
 
         val btnSubmit = findViewById<Button>(R.id.btnSubmit)
         val etComment = findViewById<EditText>(R.id.etComment)
-//        btnSubmit.setOnClickListener {
-//            Log.d("TestComment","Comment = " + etComment.text.toString())
-//        }
+
         btnSubmit.setOnClickListener {
             val loadingDialog = LoadingDialog(this@NGActivity)
             val checkStatus = spinner.selectedItem.toString()
@@ -122,10 +120,7 @@ class NGActivity : AppCompatActivity() {
                             "${date.substring(5, 7)}/" +
                             "${date.substring(8)}/" +
                             "$imageAfter"
-                    Log.d("ImageLink2",imageLink2)
                     dbConnect2.updateNG(imageLink2, empID, date, etComment.text.toString(), checkID, machineID, contentID, week)
-//                    val dialog = setProgressDialog(this, "Please Wait...")
-//                    dialog.show()
                     loadingDialog.startLoadingDialog()
                     Handler(Looper.getMainLooper()).postDelayed(Runnable {
                         finish()
