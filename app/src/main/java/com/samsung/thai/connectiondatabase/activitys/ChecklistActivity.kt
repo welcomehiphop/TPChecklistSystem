@@ -76,7 +76,7 @@ class ChecklistActivity : AppCompatActivity(), ExampleAdater.OnItemClickListener
         val datePicker = findViewById<ImageView>(R.id.date_picker)
         datePicker.setOnClickListener {
             it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
-            numberPickerCustom2(this)
+            numberPickerCustom2(this@ChecklistActivity)
 //        }
         }
     }

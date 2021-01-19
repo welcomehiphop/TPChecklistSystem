@@ -7,11 +7,12 @@ import android.view.LayoutInflater
 
 class LoadingDialog (private val context: Context) {
 
-    private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
     private lateinit var dialog : AlertDialog
 
     fun startLoadingDialog() {
         val builder = AlertDialog.Builder(context)
+        val inflater: LayoutInflater = LayoutInflater.from(context)
         builder.setView(inflater.inflate(R.layout.custom_dialog, null))
         builder.setCancelable(false)
 
