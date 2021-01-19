@@ -5,10 +5,13 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
+import com.samsung.thai.connectiondatabase.LoadingDialog
 import com.samsung.thai.connectiondatabase.R
 
 class ScannerActivity : AppCompatActivity() {
@@ -47,11 +50,15 @@ class ScannerActivity : AppCompatActivity() {
             }
         }
         btn_edit.setOnClickListener {
+            val loadingDialog = LoadingDialog(this@ScannerActivity)
+            loadingDialog.startLoadingDialog()
             it?.apply { isEnabled = false; postDelayed({ isEnabled = true }, 400) }
-            val intent = Intent(this, EditActivity::class.java)
-            intent.putExtra("date",dateChange)
-            intent.putExtra("empID",empID)
-            startActivity(intent)
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this, EditActivity::class.java)
+                intent.putExtra("date",dateChange)
+                intent.putExtra("empID",empID)
+                startActivity(intent)
+            },1000)
         }
 
     }
